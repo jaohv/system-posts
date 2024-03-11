@@ -1,5 +1,8 @@
 import { Box, Button, Flex, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure } from "@chakra-ui/react"
-import { useState } from "react"
+import { useRef, useState } from "react"
+
+import { SettingsIcon } from "@chakra-ui/icons"
+
 import { api } from "../services/api"
 
 export interface PostData {
@@ -17,7 +20,8 @@ export interface PostProps {
 function Post({ data, onDelete }: PostProps) {
     const { userId, id, title, body } = data
 
-    const [comment, setComment] = useState('')
+    const commentRef = useRef<HTMLInputElement>(null);
+
     const [comments, setComments] = useState<string[]>([])
 
     const { isOpen: isActionsModalOpen, onOpen: onActionsModalOpen, onClose: onActionsModalClose } = useDisclosure()
@@ -42,12 +46,9 @@ function Post({ data, onDelete }: PostProps) {
                 body: body
             }
 
-            const response = await api.post('comments', requestBody)
+            await api.post('comments', requestBody)
 
-            console.log(response.data)
-
-            setComments(prevComments => [...prevComments, comment])
-            setComment('')
+            setComments(prevComments => [...prevComments, commentRef.current!.value]);
             onCommentModalClose()
             onActionsModalClose()
         } catch (error) {
@@ -56,19 +57,30 @@ function Post({ data, onDelete }: PostProps) {
     }
 
     return (
-        <Box bgColor='white' h='100%' w='700px' rounded='3xl' boxShadow='rgba(0, 0, 0, 0.4) 0px 30px 90px' mt='20px'>
-            <Flex justifyContent='center' alignItems='center' height='100%' flexDir='column' textAlign='center'>
-                <Box onClick={onCommentModalOpen}>
-                    <>
-                        <Text>User ID: {userId}</Text>
+        <Box bgColor='white' h='100%' w='700px' rounded='3xl' boxShadow='rgba(0, 0, 0, 0.2) 0px 12px 28px 0px, rgba(0, 0, 0, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset' mt='50px' p={5} onClick={onCommentModalOpen}>
+            <Flex justify='center' align='center' h='100%' flexDir='column'>
+                <Flex flexDir='row' justify='space-between' w='100%'>
+                    <Flex flexDir='column'>
+                        <Flex gap={1}>
+                            <Text fontWeight={700} fontSize='2xl'>
+                                User:
+                            </Text>
+                            <Text fontSize='2xl'>
+                                {userId}
+                            </Text>
+                        </Flex>
                         <Text>ID: {id}</Text>
-                        <Text>Title: {title}</Text>
-                        <Text>Body: {body}</Text>
-                    </>
-                </Box>
-                <Button mr='20px' onClick={onActionsModalOpen} >
-                    Ações
-                </Button>
+                    </Flex>
+                    <Button mr='20px' onClick={(e) => { e.stopPropagation(); onActionsModalOpen() }}>
+                        <SettingsIcon />
+                    </Button>
+                </Flex>
+                <Flex>
+                    <Flex flexDir='column' textAlign='center'>
+                        <Text fontSize='2xl' fontWeight={700}>{title}</Text>
+                        <Text>{body}</Text>
+                    </Flex>
+                </Flex>
                 <Modal isOpen={isActionsModalOpen} onClose={onActionsModalClose}>
                     <ModalOverlay />
                     <ModalContent>
@@ -103,30 +115,14 @@ function Post({ data, onDelete }: PostProps) {
                         </ModalFooter>
                     </ModalContent>
                 </Modal>
-                {/* <Modal isOpen={isCommentModalOpen} onClose={onCommentModalClose}>
-                    <ModalOverlay />
-                    <ModalContent>
-                        <ModalHeader>Comentários</ModalHeader>
-                        <ModalCloseButton />
-                        <ModalBody>
-                            <Input placeholder="Novo Comentário" mt="20px" value={comment || ''} onChange={(e) => setComment(e.target.value)} />
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button colorScheme="blue" onClick={handleNewComment}>
-                                Adicionar Comentário
-                            </Button>
-                        </ModalFooter>
-                    </ModalContent>
-                </Modal> */}
                 <Modal isOpen={isCommentModalOpen} onClose={onCommentModalClose}>
                     <ModalOverlay />
                     <ModalContent>
                         <ModalHeader>Comentários</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
-                            <Input placeholder="Novo Comentário" value={comment || ''} onChange={(e) => setComment(e.target.value)} />
-
-                            <Text fontWeight="bold" mb={2}>Comentários:</Text>
+                            <Input placeholder="Novo Comentário" ref={commentRef} />
+                            <Text fontWeight="bold" mb={2} mt={2}>Comentários:</Text>
                             {comments.length === 0 ? (
                                 <Text>Nenhum comentário ainda.</Text>
                             ) : (

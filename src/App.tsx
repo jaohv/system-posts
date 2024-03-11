@@ -1,12 +1,13 @@
 import { Button, Flex, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react"
-import Post, { PostData } from "./components/Post"
+import { useEffect, useRef, useState } from "react"
+
 import { api } from "./services/api"
-import { useEffect, useState } from "react"
+import Post, { PostData } from "./components/Post"
 
 function App() {
   const [data, setData] = useState<PostData[]>([])
-  const [newPostTitle, setNewPostTitle] = useState('')
-  const [newPostBody, setNewPostBody] = useState('')
+  const newPostTitleRef = useRef<HTMLInputElement>(null)
+  const newPostBodyRef = useRef<HTMLInputElement>(null)
 
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -32,21 +33,21 @@ function App() {
   async function newPost() {
     try {
       const requestBody = {
-        userId: 1, 
-        title: newPostTitle,
-        body: newPostBody
+        userId: 1,
+        title: newPostTitleRef.current?.value || '',
+        body: newPostBodyRef.current?.value || ''
       }
 
       const response = await api.post('/posts', requestBody)
-  
+
       setData(prevData => {
         const newData = [...prevData, response.data]
 
         return newData.sort((a, b) => a.title.localeCompare(b.title))
       })
-  
-      setNewPostTitle('')
-      setNewPostBody('')
+
+      newPostTitleRef.current!.value = ''
+      newPostBodyRef.current!.value = ''
       onClose()
     } catch (error) {
       console.log('Erro ao criar uma postagem:', error)
@@ -64,32 +65,30 @@ function App() {
   }
 
   return (
-    <>
-      <Flex justifyContent='center' height='100vh' h='100%' w='100%' bgColor='rgb(39, 151, 186)' flexDir='row'>
-        <Button mt='20px' mr='20px' onClick={onOpen}>
-          + Nova postagem
-        </Button>
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Nova postagem</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody >
-              <Input placeholder="title" value={newPostTitle} onChange={(e) => setNewPostTitle(e.target.value)} mb='10px' />
-              <Input placeholder="body" value={newPostBody} onChange={(e) => setNewPostBody(e.target.value)} />
-            </ModalBody>
-            <ModalFooter>
-              <Button variant='ghost' onClick={newPost}>Adicionar postagem</Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-        <Flex flexDir='column'>
-          {data.map((post, index) => (
-            <Post key={index} data={post} onDelete={() => handleDelete(post.id)}/>
-          ))}
-        </Flex>
+    <Flex minH='100vh' h= '100%' w='100%' bgColor='rgb(39, 151, 186)' justify='center' flexDir='row'>
+      <Button mt='50px' mr='20px' onClick={onOpen}>
+        + Nova postagem
+      </Button>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Nova postagem</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody >
+            <Input placeholder='Título' ref={newPostTitleRef} mb='10px' />
+            <Input placeholder='Conteúdo' ref={newPostBodyRef} />
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={newPost}>Adicionar postagem</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Flex flexDir='column'>
+        {data.map((post, index) => (
+          <Post key={index} data={post} onDelete={() => handleDelete(post.id)} />
+        ))}
       </Flex>
-    </>
+    </Flex>
   )
 }
 
