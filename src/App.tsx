@@ -65,8 +65,8 @@ function App() {
   }
 
   return (
-    <Flex minH='100vh' h= '100%' w='100%' bgColor='rgb(39, 151, 186)' justify='center' flexDir='row'>
-      <Button mt='50px' mr='20px' onClick={onOpen}>
+    <Flex minH='100vh' w='100%' bgColor='rgb(39, 151, 186)' alignItems={['center', '']} justify='center' flexDir={['column', 'row']}>
+      <Button mt='50px' mr={['0', '20px']} onClick={onOpen}>
         + Nova postagem
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>
