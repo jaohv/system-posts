@@ -19,7 +19,7 @@ O projeto possui as seguintes funcionalidades:
 - Abra o seu terminal e digite os seguintes comandos:
 
 ```
-git clone https://github.com/jaohv/project_crud.git](https://github.com/jaohv/system-posts.git
+git clone https://github.com/jaohv/system-posts.git
 cd system-posts
 yarn
 ```
