@@ -1,8 +1,6 @@
 import { Box, Button, Flex, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure } from "@chakra-ui/react"
-import { useRef, useState } from "react"
-
+import { useRef, useState, useEffect } from "react"
 import { SettingsIcon } from "@chakra-ui/icons"
-
 import { api } from "../services/api"
 
 export interface PostData {
@@ -17,22 +15,37 @@ export interface PostProps {
     onDelete: (id: number) => void
 }
 
+export interface CommentData {
+    postId: number
+    id: number
+    name: string
+    email: string
+    body: string
+}
+
 function Post({ data, onDelete }: PostProps) {
     const { userId, id, title, body } = data
-
     const commentRef = useRef<HTMLInputElement>(null);
-
-    const [comments, setComments] = useState<string[]>([])
-
+    const [comments, setComments] = useState<CommentData[]>([])
     const { isOpen: isActionsModalOpen, onOpen: onActionsModalOpen, onClose: onActionsModalClose } = useDisclosure()
     const { isOpen: isConfirmModalOpen, onOpen: onConfirmModalOpen, onClose: onConfirmModalClose } = useDisclosure()
     const { isOpen: isCommentModalOpen, onOpen: onCommentModalOpen, onClose: onCommentModalClose } = useDisclosure()
 
+    useEffect(() => {
+        const fetchComments = async () => {
+            try {
+                const response = await api.get(`comments?postId=${id}`)
+                setComments(response.data)
+            } catch (error) {
+                console.log('Erro ao buscar comentários:', error)
+            }
+        };
+        fetchComments()
+    }, [id])
+
     const handleDelete = async () => {
         onDelete(id)
-
         setComments([])
-
         onConfirmModalClose()
         onActionsModalClose()
     }
@@ -40,15 +53,16 @@ function Post({ data, onDelete }: PostProps) {
     const handleNewComment = async () => {
         try {
             const requestBody = {
-                id: id,
-                userId: userId,
-                title: title,
-                body: body
+                postId: id,
+                id: comments.length + 1,
+                name: "Psicomanager",
+                email: "psicomanager@gmail.com",
+                body: commentRef.current!.value
             }
 
             await api.post('comments', requestBody)
 
-            setComments(prevComments => [...prevComments, commentRef.current!.value]);
+            setComments(prevComments => [...prevComments, requestBody]);
             onCommentModalClose()
             onActionsModalClose()
         } catch (error) {
@@ -71,7 +85,7 @@ function Post({ data, onDelete }: PostProps) {
                         </Flex>
                         <Text>ID: {id}</Text>
                     </Flex>
-                    <Button mr='20px' onClick={(e) => { e.stopPropagation(); onActionsModalOpen() }}>
+                    <Button variant='ghost' mr='20px' onClick={(e) => { e.stopPropagation(); onActionsModalOpen() }}>
                         <SettingsIcon />
                     </Button>
                 </Flex>
@@ -127,7 +141,10 @@ function Post({ data, onDelete }: PostProps) {
                                 <Text>Nenhum comentário ainda.</Text>
                             ) : (
                                 comments.map((comment, index) => (
-                                    <Text key={index}>{comment}</Text>
+                                    <Box key={index} borderWidth="1px" borderRadius="lg" p="4" my="2">
+                                        <Text fontWeight="bold">{comment.name} ({comment.email})</Text>
+                                        <Text>{comment.body}</Text>
+                                    </Box>
                                 ))
                             )}
                         </ModalBody>

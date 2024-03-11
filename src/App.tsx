@@ -32,11 +32,22 @@ function App() {
 
   async function newPost() {
     try {
+      const newTitle = newPostTitleRef.current?.value || ''
+      const newBody = newPostBodyRef.current?.value || ''
+
+      const titleExists = data.some(post => post.title === newTitle);
+
+      if (titleExists) {
+        alert("Já existe uma postagem com este título.")
+        return;
+      }
+
       const requestBody = {
         userId: 1,
-        title: newPostTitleRef.current?.value || '',
-        body: newPostBodyRef.current?.value || ''
+        title: newTitle,
+        body: newBody
       }
+
 
       const response = await api.post('/posts', requestBody)
 
@@ -65,7 +76,7 @@ function App() {
   }
 
   return (
-    <Flex minH='100vh' w='100%' bgColor='rgb(39, 151, 186)' alignItems={['center', '']} justify='center' flexDir={['column', 'row']}>
+    <Flex minH='100vh' w='100%' bgColor='rgb(39, 151, 186)' alignItems={['center', 'flex-start']} justify='center' flexDir={['column', 'row']}>
       <Button mt='50px' mr={['0', '20px']} onClick={onOpen}>
         + Nova postagem
       </Button>
