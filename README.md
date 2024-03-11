@@ -1,30 +1,33 @@
-# React + TypeScript + Vite
+# Psicomanager
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Tecnologias/Framework
+<b>Desenvolvido ultilizando:</b>
+- [React](https://react.dev)
+- [ChakraUI](http://chakra-ui.com)
+- [Axios](https://axios-http.com)
 
-Currently, two official plugins are available:
+## Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+O projeto possui as seguintes funcionalidades:
 
-## Expanding the ESLint configuration
+- Listar todas as postagens
+- Adicionar uma nova postagem
+- Remover uma postagem
+- Adicionar comentários
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Como instalar
+- Abra o seu terminal e digite os seguintes comandos:
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```
+git clone https://github.com/jaohv/project_crud.git](https://github.com/jaohv/system-posts.git
+cd system-posts
+yarn
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Como rodar a aplicação
+
+#### 1. Digite os seguinte comandos:
+
+```
+yarn dev
+```
