@@ -55,8 +55,8 @@ function Post({ data, onDelete }: PostProps) {
             const requestBody = {
                 postId: id,
                 id: comments.length + 1,
-                name: "Psicomanager",
-                email: "psicomanager@gmail.com",
+                name: "João Vitor Miranda",
+                email: "joao.rmiranda@icloud.com",
                 body: commentRef.current!.value
             }
 
