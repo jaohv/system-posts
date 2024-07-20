@@ -1,4 +1,6 @@
-# Psicomanager
+# System Post 
+
+Este projeto desenvolvi para consumir uma API que contém postagens e comentários.
 
 ## Tecnologias/Framework
 <b>Desenvolvido ultilizando:</b>
